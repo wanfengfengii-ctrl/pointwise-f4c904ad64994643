@@ -10,7 +10,11 @@ class QuoteReader:
             return None
         bids = [p for side, p, qty in book['orders'].values() if side == 'B']
         asks = [p for side, p, qty in book['orders'].values() if side == 'S']
-        return dict(symbol=symbol, epoch=book['epoch'], seq=book['seq'], bid=max(bids, default=None), ask=min(asks, default=None))
+        quote = dict(symbol=symbol, epoch=book['epoch'], seq=book['seq'], bid=max(bids, default=None), ask=min(asks, default=None))
+        if 'status' in book:
+            quote['status'] = book['status']
+            quote['source_epoch'] = book['source_epoch']
+        return quote
 
     def close(self):
         self.books.close()
